@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>33聊天室</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Long+Cang&display=swap" rel="stylesheet">
+
+    <!-- PWA for iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#A6A6D2" />
+    <meta name="apple-mobile-web-app-title" content="33" />
+    <link rel="apple-touch-icon" href="" />
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+    <!-- 开屏动画 -->
+    <div id="splash-screen">
+        <div class="splash-logo">33聊天室</div>
+        <div class="splash-loader"></div>
+        <p style="position: absolute; bottom: 20px; font-size: 12px; color: #aaa; user-select: none;">此聊天室由33制作，xhs:@回风
+        </p>
+    </div>
+    <div id="app-container">
+        <!-- 顶部浮窗通知容器 -->
+        <div id="top-notification-container"></div>
+        <!-- 主内容区域 -->
+        <main id="main-content">
+            <!-- 消息列表页面 -->
+            <div id="page-messages" class="page active">
+                <div class="page-header">
+                    <img id="my-avatar"
+                        src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDUwIDUwIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiMwMDAiLz48L3N2Zz4="
+                        alt="My Avatar">
+                    <h1>消息</h1>
+                    <a href="https://www.xiaohongshu.com/user/profile/5e65e0f00000000001002837?xsec_token=YBen3b8AVcwS9WjKSzS_xETWKfb3hsoxlS1uX8KTmQLSU%3D&xsec_source=app_share&xhsshare=CopyLink&appuid=5e65e0f00000000001002837&apptime=1751753800&share_id=a6aa049960ff46489ba8080e8cc476d0&share_channel=copy_link"
+                        target="_blank" id="header-link-btn">
+                        <i class="fas fa-lightbulb"></i>
+                    </a>
+                </div>
+                <div class="page-content">
+                    <ul id="message-list-ul" class="message-list">
+                        <!-- 消息项将由JS动态生成 -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 通讯录页面 -->
+            <div id="page-contacts" class="page">
+                <div class="page-header">
+                    <div class="header-icon" style="visibility: hidden;"></div> <!-- 占位符 -->
+                    <h1>通讯录</h1>
+                    <div id="add-menu-btn" class="header-icon"><i class="fas fa-plus"></i></div>
+                </div>
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="friends">好友</button>
+                    <button class="tab-btn" data-tab="groups">群聊</button>
+                </div>
+                <div class="page-content" style="padding: 0 15px;">
+                    <div id="contacts-friends" class="contact-section active">
+                        <div class="contact-list-header">
+                            <span id="sort-friends-btn" class="sort-btn">排序 <i class="fas fa-sort"></i></span>
+                        </div>
+                        <ul id="friends-list-ul" class="contact-list"></ul>
+                    </div>
+                    <div id="contacts-groups" class="contact-section">
+                        <div class="contact-list-header">
+                            <span id="sort-groups-btn" class="sort-btn">排序 <i class="fas fa-sort"></i></span>
+                        </div>
+                        <ul id="groups-list-ul" class="contact-list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设置页面 -->
+            <div id="page-settings" class="page">
+                <div class="page-header">
+                    <h1>設定</h1>
+                </div>
+                <div class="page-content">
+                    <div class="settings-list">
+                        <div class="setting-item" id="setting-tutorial">
+                            <i class="fas fa-question-circle"></i>
+                            <span>33食用指南</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <!-- 新增的聊天设置项 -->
+                        <div class="setting-item" id="setting-chat">
+                            <i class="fas fa-comments"></i>
+                            <span>聊天設定</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="setting-api">
+                            <i class="fas fa-server"></i>
+                            <span>API 設定</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="setting-prompts">
+                            <i class="fas fa-magic"></i>
+                            <span>自定義提示詞</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="setting-theme">
+                            <i class="fas fa-palette"></i>
+                            <span>主题設定</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="setting-reset">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>重置應用</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 聊天页面 -->
+            <div id="page-chat" class="page">
+                <div class="page-header">
+                    <div id="chat-back-btn" class="header-icon"><i class="fas fa-chevron-left"></i></div>
+                    <div class="header-title-wrapper">
+                        <h1 class="header-title" id="chat-title"></h1>
+                        <div class="typing-indicator-container" id="chat-typing-indicator">
+                            <span>對方正在輸入...</span>
+                        </div>
+                    </div>
+                    <div id="chat-manage-btn" class="header-icon"><i class="fas fa-ellipsis-v"></i></div>
+                </div>
+                <div class="chat-area" id="chat-area">
+                    <div id="history-loader">
+                        <div class="loader-spinner"></div>
+                    </div>
+                    <!-- 消息气泡将由JS动态生成 -->
+                </div>
+                <div class="chat-input-area" id="chat-input-area">
+                    <!-- 引用预览区域 -->
+                    <div class="quote-preview-area" id="quote-preview-area">
+                        <div class="quote-preview-content" id="quote-preview-content"></div>
+                        <button class="cancel-quote-btn" id="cancel-quote-btn" title="取消引用">×</button>
+                    </div>
+
+                    <!-- 输入和发送行 -->
+                    <div class="input-top-row">
+                        <button id="ai-request-btn"><i class="fas fa-feather-alt"></i></button>
+                        <textarea id="message-input" placeholder="輸入訊息..." rows="1"></textarea>
+                        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+
+                    <!-- 功能按钮行 -->
+                    <div class="input-feature-row">
+                        <button class="feature-btn" id="emoji-btn" title="傳送表情"><i class="fas fa-smile"></i></button>
+                        <button class="feature-btn" id="favorite-emoji-btn" title="收藏的表情"><i
+                                class="fas fa-star"></i></button>
+                        <button class="feature-btn" id="voice-btn" title="傳送語音"><i
+                                class="fas fa-microphone"></i></button>
+                        <button class="feature-btn" id="transfer-btn" title="轉帳"><i class="fas fa-wallet"></i></button>
+                        <button class="feature-btn" id="red-packet-btn" title="發紅包"><i class="fas fa-gift"></i></button>
+                        <button class="feature-btn" id="simulated-image-btn" title="圖文訊息"><i
+                                class="fas fa-image"></i></button>
+                    </div>
+                    <!-- 表情包面板 (默认隐藏) -->
+                    <div class="emoji-card" id="emoji-card">
+                        <div class="emoji-grid" id="emoji-grid"></div>
+                        <div class="emoji-nav">
+                            <button id="emoji-prev-btn"><i class="fas fa-chevron-left"></i></button>
+                            <span id="emoji-page-indicator"></span>
+                            <button id="emoji-next-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <!-- 收藏表情包面板 (默认隐藏) -->
+                    <div class="emoji-card" id="favorite-emoji-card">
+                        <div class="emoji-grid" id="favorite-emoji-grid"></div>
+                        <div class="emoji-nav" style="display: none;">
+                            <button id="favorite-emoji-prev-btn"><i class="fas fa-chevron-left"></i></button>
+                            <span id="favorite-emoji-page-indicator"></span>
+                            <button id="favorite-emoji-next-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 自定义提示词页面 -->
+            <div id="page-prompts" class="page">
+                <div class="page-header">
+                    <div id="prompts-back-btn" class="header-icon"><i class="fas fa-chevron-left"></i></div>
+                    <h1>自定義提示詞</h1>
+                    <div id="prompt-header-actions"
+                        style="display: flex; gap: 15px; justify-self: end; padding-right: 15px;">
+                        <div id="import-prompts-btn" class="header-icon" title="匯入"><i class="fas fa-download"></i>
+                        </div>
+                        <div id="export-prompts-btn" class="header-icon" title="匯出"><i class="fas fa-upload"></i></div>
+                        <div id="add-prompt-folder-btn" class="header-icon" title="新建檔案夾"><i
+                                class="fas fa-folder-plus"></i></div>
+                    </div>
+                </div>
+                <div class="page-content" id="prompts-page-content">
+                    <!-- 文件夹和提示词将由JS动态生成 -->
+                </div>
+                <div class="page-footer"
+                    style="padding: 10px; text-align: center; border-top: 1px solid var(--border-color); background: rgba(255,255,255,0.5);">
+                    <button id="add-new-prompt-btn" class="modal-btn btn-primary" style="width: 90%;"><i
+                            class="fas fa-plus-circle"></i> 新建提示詞</button>
+                </div>
+            </div>
+
+            <!-- 发现页面 -->
+            <div id="page-discover" class="page">
+                <div class="page-header">
+                    <h1>發現</h1>
+                </div>
+                <div class="page-content">
+                    <div class="settings-list">
+                        <div class="setting-item" id="nav-to-moments">
+                            <i class="fas fa-camera-retro"></i>
+                            <span>朋友圈</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主题设置页面 (新) -->
+            <div id="page-theme-settings" class="page">
+                <div class="page-header">
+                    <div id="theme-settings-back-btn" class="header-icon"><i class="fas fa-chevron-left"></i></div>
+                    <h1>主題設定</h1>
+                </div>
+                <div class="page-content" id="theme-settings-content">
+                    <!-- 卡片内容将由JS动态生成 -->
+                </div>
+            </div>
+
+            <!-- 朋友圈页面 -->
+            <div id="page-moments" class="page">
+                <!-- 新增的包裹层 -->
+                <div id="moments-wrapper">
+                    <div class="page-header">
+                        <div id="moments-back-btn" class="header-icon"><i class="fas fa-chevron-left"></i></div>
+                        <div id="moments-actions-group">
+                            <div id="moments-refresh-btn" class="header-icon"><i class="fas fa-sync-alt"></i></div>
+                            <div id="moments-new-post-btn" class="header-icon"><i class="fas fa-camera"></i></div>
+                            <div id="moments-manage-btn" class="header-icon"><i class="fas fa-bars"></i></div>
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <div class="moments-header-container">
+                            <img id="moments-bg" src="https://z.wiki/autoupload/20240706/3g0x.250-1_2_0.png"
+                                alt="朋友圈背景">
+                            <div class="moments-profile-info">
+                                <span id="moments-my-name" class="name">你的名字</span>
+                                <img id="moments-my-avatar"
+                                    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDUwIDUwIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiMwMDAiLz48L3N2Zz4="
+                                    alt="你的頭像" class="avatar">
+                            </div>
+                        </div>
+                        <ul id="moments-list">
+                            <!-- 朋友圈动态将由JS动态生成 -->
+                        </ul>
+                    </div>
+                </div> <!-- 新增的包裹层闭合标签 -->
+            </div>
+            <!-- 教程页面 (新) -->
+            <div id="page-tutorial" class="page">
+                <div class="page-header">
+                    <div id="tutorial-back-btn" class="header-icon"><i class="fas fa-chevron-left"></i></div>
+                    <h1>教程</h1>
+                </div>
+                <div class="page-content">
+                    <div class="settings-list">
+                        <div class="setting-item" id="tutorial-api">
+                            <i class="fas fa-key"></i>
+                            <span>如何配置API</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-character">
+                            <i class="fas fa-user-plus"></i>
+                            <span>如何創建新角色</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-group">
+                            <i class="fas fa-users"></i>
+                            <span>如何創建群聊</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-chatting">
+                            <i class="fas fa-comment-alt"></i>
+                            <span>如何進行聊天</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-opening-scene">
+                            <i class="fas fa-scroll"></i>
+                            <span>開場白是什么？</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-prompts">
+                            <i class="fas fa-magic"></i>
+                            <span>提示詞是什么？</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-import-export">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>如何匯入匯出</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-moments">
+                            <i class="fas fa-camera-retro"></i>
+                            <span>朋友圈如何使用</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="setting-item" id="tutorial-theme">
+                            <i class="fas fa-palette"></i>
+                            <span>如何設定主題</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <div class="tutorial-watermark">
+                        <span>此聊天室由33製作，xhs:@回风。</span><br>
+                        <span style="font-size: 0.9em; opacity: 0.8;">功能反饋與新功能需求可聯繫我噢⌯>ᴗo⌯ .ᐟ.ᐟ</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav id="bottom-nav">
+            <div class="nav-item active" data-page="messages">
+                <i class="fas fa-comment-dots"></i>
+                <span>訊息</span>
+            </div>
+            <div class="nav-item" data-page="contacts">
+                <i class="fas fa-address-book"></i>
+                <span>聯絡人</span>
+            </div>
+            <div class="nav-item" data-page="discover">
+                <i class="fas fa-compass"></i>
+                <span>發現</span>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i>
+                <span>設定</span>
+            </div>
+        </nav>
+    </div>
+
+
+    <!-- 模态框 -->
+    <input type="file" id="import-data-input" accept=".json" style="display: none;">
+    <div id="modal-overlay">
+        <div id="modal-content-wrapper" class="modal-content">
+            <!-- 模态框内容将由JS动态生成 -->
+        </div>
+    </div>
+
+    <!-- 点击特效层 -->
+    <div id="click-effect-layer"></div>
+
+
+
+    <!-- 个人信息侧边栏 -->
+    <div id="sidebar-overlay">
+        <div id="sidebar-content">
+            <!-- 侧边栏内容将由JS动态生成 -->
+        </div>
+    </div>
+
+    <!-- 底部选择器 -->
+    <div id="bottom-sheet-overlay">
+        <div id="bottom-sheet-content-wrapper" class="bottom-sheet-content">
+            <!-- 内容将由JS动态生成 -->
+        </div>
+    </div>
+
+    <input type="file" id="moments-bg-input" accept="image/*" style="display: none;">
+    <input type="file" id="import-prompts-input" accept=".json" style="display: none;">
+
+    <script src="script.js"></script>
+</body>
+
+</html>
